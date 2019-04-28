@@ -1,6 +1,5 @@
 import cherrypy
 import socket
-import sys
 import os
 from DAL import DAL
 import json
@@ -13,26 +12,30 @@ class Root:
     def __init__(self, ini_file):
         self.dal = DAL(ini_file)
 
+    # Route("/")
     @cherrypy.expose()
     def index(self):
 
-        game_list = self.dal.get_games()
-        return json.dumps(game_list)
+        return "Hello world!"
 
+    # Route("/get_games/")
     @cherrypy.expose()
     def get_games(self):
         game_list = self.dal.get_games()
         return json.dumps(game_list)
 
+    # Route("/get_characters_from_game/{game_id}/")
     @cherrypy.expose()
     def get_characters_from_game(self, game_id):
         char_list = self.dal.get_characters_from_game(game_id)
         return json.dumps(char_list)
 
+    # Route("/get_movelist_for_char/{char_id}/")
     @cherrypy.expose()
     def get_movelist_for_char(self, char_id):
         move_list = self.dal.get_moves_for_character(char_id)
         return json.dumps(move_list)
+
 
 if __name__ == "__main__":
 
@@ -49,8 +52,4 @@ if __name__ == "__main__":
         },
     }
 
-    if len(sys.argv) < 2:
-        print("No ini file specified!")
-    else:
-        ini_file = sys.argv[1]
-        cherrypy.quickstart(Root(ini_file), config=conf)
+    cherrypy.quickstart(Root("../bin/settings.ini"), config=conf)

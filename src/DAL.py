@@ -126,6 +126,3 @@ class DAL:
             return_list.append(move_obj)
 
         return return_list
-
-    def test(self):
-        return self.get_moves_for_character(1)
