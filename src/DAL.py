@@ -71,14 +71,19 @@ class DAL:
 
         char_list = (
             session
-            .query(Gamecharacter)
+            .query(
+                Gamecharacter,
+                Game
+            )
+            .filter(Gamecharacter.gameId == Game.id)
             .filter(Gamecharacter.gameId == game_id)
         )
 
         for character in char_list.all():
             char_obj = {
-                "name": character.name,
-                "id": character.id
+                "name": character.Gamecharacter.name,
+                "id": character.Gamecharacter.id,
+                "game": character.Game.name,
             }
             return_list.append(char_obj)
 
@@ -99,7 +104,8 @@ class DAL:
             .query(Gamecharacter,
                    Move,
                    Charactermove,
-                   Game)
+                   Game,
+                   Series)
             .filter(
                 Gamecharacter.id == Charactermove.characterId
             )
@@ -108,6 +114,9 @@ class DAL:
             )
             .filter(
                 Gamecharacter.gameId == Game.id
+            )
+            .filter(
+                Game.seriesId == Series.id
             )
             .filter(
                 Gamecharacter.id == char_id
@@ -121,8 +130,57 @@ class DAL:
                 "ex": move.Move.ex,
                 "character_name": move.Gamecharacter.name,
                 "game_name": move.Game.name,
+                "series": move.Series.name,
                 "id": move.Charactermove.id
             }
             return_list.append(move_obj)
 
         return return_list
+
+    def add_object_to_db(self, data_obj):
+        """
+        Helper method to add an object into the database.
+        :param data_obj: The object to add. This method does not care what
+        type of object this is, it will try to shove it into the database.
+        I.E. make sure it is a valid table object!
+        :return: True if successful, False if not.
+        """
+        session = self.create_scoped_session()
+
+        try:
+            session.add(data_obj)
+            session.commit()
+            return True
+        except:
+            session.rollback()
+            return False
+
+    def add_platform(self, platform_name):
+
+        new_platform = Platform(platform_name)
+
+        return self.add_object_to_db(new_platform)
+
+    def add_series(self, series_name):
+        new_series = Series(series_name)
+        return self.add_object_to_db(new_series)
+
+    def add_game(self, game_name, platform_id, series_id):
+        new_game = Game(game_name, platform_id, series_id)
+
+        return self.add_object_to_db(new_game)
+
+    def add_character(self, character_name, game_id):
+        new_character = Gamecharacter(character_name, game_id)
+        return self.add_object_to_db(new_character)
+
+    def add_move(self, move_name, input, ex):
+        new_move = Move(move_name, input, ex)
+        return self.add_object_to_db(new_move)
+
+    def add_character_move_link(self, character_id, move_id):
+        new_link = Charactermove(character_id, move_id)
+        return self.add_object_to_db(new_link)
+
+    def delete_platform(self, platform_id):
+        pass

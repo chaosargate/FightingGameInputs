@@ -1,0 +1,7 @@
+* {
+    font-family: arial;
+}
+
+.moveRow > td > img {
+    padding: 3px;
+}
