@@ -101,37 +101,21 @@ class DAL:
 
         move_list = (
             session
-            .query(Gamecharacter,
-                   Move,
-                   Charactermove,
-                   Game,
-                   Series)
+            .query(Charactermove)
             .filter(
-                Gamecharacter.id == Charactermove.characterId
-            )
-            .filter(
-                Move.id == Charactermove.moveId
-            )
-            .filter(
-                Gamecharacter.gameId == Game.id
-            )
-            .filter(
-                Game.seriesId == Series.id
-            )
-            .filter(
-                Gamecharacter.id == char_id
+                Charactermove.characterId == char_id
             )
         )
 
-        for move in move_list.all():
+        for character_move in move_list.all():
             move_obj = {
-                "name": move.Move.name,
-                "input": move.Move.input,
-                "ex": move.Move.ex,
-                "character_name": move.Gamecharacter.name,
-                "game_name": move.Game.name,
-                "series": move.Series.name,
-                "id": move.Charactermove.id
+                "name": character_move.move.name,
+                "input": character_move.move.input,
+                "ex": character_move.move.ex,
+                "character_name": character_move.gamecharacter.name,
+                "game_name": character_move.gamecharacter.game.name,
+                "series": character_move.gamecharacter.game.series.name,
+                "id": character_move.id
             }
             return_list.append(move_obj)
 
