@@ -73,17 +73,15 @@ class DAL:
             session
             .query(
                 Gamecharacter,
-                Game
             )
-            .filter(Gamecharacter.gameId == Game.id)
             .filter(Gamecharacter.gameId == game_id)
         )
 
         for character in char_list.all():
             char_obj = {
-                "name": character.Gamecharacter.name,
-                "id": character.Gamecharacter.id,
-                "game": character.Game.name,
+                "name": character.name,
+                "id": character.id,
+                "game": character.game.name,
             }
             return_list.append(char_obj)
 
@@ -106,7 +104,6 @@ class DAL:
                 Charactermove.characterId == char_id
             )
         )
-
         for character_move in move_list.all():
             move_obj = {
                 "name": character_move.move.name,
