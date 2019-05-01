@@ -8,15 +8,6 @@ Base = declarative_base()
 metadata = Base.metadata
 
 
-class Move(Base):
-    __tablename__ = 'move'
-
-    id = Column(INTEGER(11), primary_key=True)
-    name = Column(String(150), nullable=False)
-    input = Column(String(150), nullable=False)
-    ex = Column(TINYINT(4), nullable=False, server_default=text("'0'"))
-
-
 class Platform(Base):
     __tablename__ = 'platform'
 
@@ -49,6 +40,18 @@ class Gamecharacter(Base):
     id = Column(INTEGER(11), primary_key=True)
     name = Column(String(150), nullable=False)
     gameId = Column(ForeignKey(u'game.id'), index=True)
+
+    game = relationship(u'Game')
+
+
+class Move(Base):
+    __tablename__ = 'move'
+
+    id = Column(INTEGER(11), primary_key=True)
+    name = Column(String(150), nullable=False)
+    input = Column(String(150), nullable=False)
+    ex = Column(TINYINT(4), nullable=False, server_default=text("'0'"))
+    gameId = Column(ForeignKey(u'game.id'), nullable=False, index=True)
 
     game = relationship(u'Game')
 

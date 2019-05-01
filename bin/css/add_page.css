@@ -1,0 +1,7 @@
+#DataTypeRadioHolder {
+    display: inline-flex;
+}
+
+.DataTypeRadioButton {
+    margin: 5px;
+}

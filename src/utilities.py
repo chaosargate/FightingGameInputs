@@ -1,18 +1,29 @@
-def make_page(title, body):
+def make_page(title, body, add_page=False):
     return "{header}<h1>{title}</h1><br/>{table}".format(
-        header=page_header(title),
+        header=page_header(title, add_page),
         title=title,
         table=body
     )
 
 
-def page_header(title):
+def page_header(title, add_page):
+    react_imports = """
+        <script src='/bin/js/react.development.js'></script>
+        <script src='/bin/js/react-dom.development.js'></script>
+        <script src='/bin/js/babel6.js'></script>
+        <script type="text/babel" src='/bin/js/add_page.js'></script>
+        <link rel='stylesheet' href='/bin/css/add_page.css'>
+    """
     return """
     <head>
+        {react_imports}
         <link rel='stylesheet' href='/bin/css/main.css'>
         <title>{title}</title>
     </head>
-    """.format(title=title)
+    """.format(
+           react_imports=react_imports if add_page else "",
+           title=title
+    )
 
 
 def make_input_td(series, move_input):

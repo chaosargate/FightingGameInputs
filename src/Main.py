@@ -26,6 +26,8 @@ class Root:
                 name=game["name"]
             )
 
+        game_list_links += "<a href='/add_page'>Add Data</a>"
+
         return make_page("Select a game!", game_list_links)
 
     @cherrypy.expose()
@@ -82,8 +84,29 @@ class Root:
         return make_page(page_title, out_table)
 
     @cherrypy.expose()
+    def add_page(self):
+        page_title = "Add Data"
+        body = """<div id="reactForm" />"""
+        return make_page(page_title, body, add_page=True)
+
+    @cherrypy.expose()
+    def get_plaform_list(self):
+        platform_list = self.dal.get_platforms()
+        return json.dumps(platform_list)
+
+    @cherrypy.expose()
+    def get_game_list(self):
+        game_list = self.dal.get_games()
+        return json.dumps(game_list)
+
+    @cherrypy.expose()
     def get_movelist_for_char(self, char_id):
         move_list = self.dal.get_moves_for_character(char_id)
+        return json.dumps(move_list)
+
+    @cherrypy.expose()
+    def get_movelist_from_game(self, game_id):
+        move_list = self.dal.get_moves_from_game(game_id)
         return json.dumps(move_list)
 
 

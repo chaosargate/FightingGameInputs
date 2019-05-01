@@ -8,6 +8,7 @@ class SettingsIni:
 
         with open(ini_file, "r") as ini:
             settings.read_file(ini)
+            self.driver = settings["DEFAULT"]["driver"]
             self.username = settings["DEFAULT"]["username"]
             self.password = settings["DEFAULT"]["password"]
             self.db_str = settings["DEFAULT"]["db_str"]

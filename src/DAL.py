@@ -17,7 +17,8 @@ class DAL:
         self.settings = SettingsIni(ini_file)
 
         # Build the DB string. All of the options here should be in an .ini file.
-        db_str = "mysql://{user}:{password}@{db_str}/{db}".format(
+        db_str = "{driver}://{user}:{password}@{db_str}/{db}".format(
+            driver=self.settings.driver,
             user=self.settings.username,
             password=self.settings.password,
             db_str=self.settings.db_str,
@@ -34,7 +35,27 @@ class DAL:
         :return: a scoped session
         """
         return scoped_session(self.session)
-    
+
+    def get_platforms(self):
+        return_list = []
+
+        session = self.create_scoped_session()
+
+        platform_list = (
+            session
+            .query(Platform)
+        )
+
+        for platform in platform_list:
+            platform_obj = {
+                "name": platform.name,
+                "id": platform.id
+            }
+
+            return_list.append(platform_obj)
+
+        return return_list
+
     def get_games(self):
         """
         Get the list of games in the system.
@@ -84,6 +105,26 @@ class DAL:
                 "game": character.game.name,
             }
             return_list.append(char_obj)
+
+        return return_list
+
+    def get_moves_from_game(self, game_id):
+        return_list = []
+
+        session = self.create_scoped_session()
+        move_list = (
+            session
+            .query(Move)
+            .filter(Move.gameId == game_id)
+        )
+
+        for move in move_list:
+            moveObj = {
+                "name": move.name,
+                "id": move.id,
+                "game": move.game.name,
+            }
+            return_list.append(moveObj)
 
         return return_list
 
@@ -137,9 +178,7 @@ class DAL:
             return False
 
     def add_platform(self, platform_name):
-
         new_platform = Platform(platform_name)
-
         return self.add_object_to_db(new_platform)
 
     def add_series(self, series_name):
@@ -148,15 +187,14 @@ class DAL:
 
     def add_game(self, game_name, platform_id, series_id):
         new_game = Game(game_name, platform_id, series_id)
-
         return self.add_object_to_db(new_game)
 
     def add_character(self, character_name, game_id):
         new_character = Gamecharacter(character_name, game_id)
         return self.add_object_to_db(new_character)
 
-    def add_move(self, move_name, input, ex):
-        new_move = Move(move_name, input, ex)
+    def add_move(self, move_name, input, ex, game_id):
+        new_move = Move(move_name, input, ex, game_id)
         return self.add_object_to_db(new_move)
 
     def add_character_move_link(self, character_id, move_id):
