@@ -5,3 +5,25 @@
 .DataTypeRadioButton {
     margin: 5px;
 }
+
+.addForm {
+    display: inline-grid;
+}
+
+.inputHolder {
+    display: inline-grid;
+    width: 100%;
+}
+
+.inputHolder > input,
+.inputHolder > select {
+    padding: 5px;
+    width: 50%;
+    margin: 5px;
+}
+
+.inputHolder > button {
+    margin: 5px;
+    width: 10%;
+    padding: 2px;
+}

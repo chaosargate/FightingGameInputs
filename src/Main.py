@@ -87,9 +87,14 @@ class Root:
         return make_page(page_title, body, add_page=True)
 
     @cherrypy.expose()
-    def get_plaform_list(self):
+    def get_platform_list(self):
         platform_list = self.dal.get_platforms()
         return json.dumps(platform_list)
+
+    @cherrypy.expose()
+    def get_series_list(self):
+        series_list = self.dal.get_series()
+        return json.dumps(series_list)
 
     @cherrypy.expose()
     def get_game_list(self):
@@ -106,7 +111,23 @@ class Root:
         move_list = self.dal.get_moves_from_game(game_id)
         return json.dumps(move_list)
 
+    @cherrypy.expose()
+    def submit_platform(self, platform_name):
+        return json.dumps({"success": self.dal.add_platform(platform_name)})
 
+    @cherrypy.expose()
+    def submit_series(self, series_name):
+        return json.dumps({"success": self.dal.add_series(series_name)})
+
+    @cherrypy.expose()
+    def submit_game(self, platform_id, series_id, game_name):
+        return json.dumps({"success": self.dal.add_game(
+            game_name=game_name,
+            platform_id=platform_id,
+            series_id=series_id
+        )})
+
+    
 if __name__ == "__main__":
 
     cherrypy.config.update({

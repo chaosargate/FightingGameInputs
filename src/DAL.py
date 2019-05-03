@@ -24,7 +24,6 @@ class DAL:
             db_str=self.settings.db_str,
             db=self.settings.db
         )
-        print(db_str)
         self.engine = create_engine(
             db_str, echo=False
         )
@@ -45,6 +44,7 @@ class DAL:
         platform_list = (
             session
             .query(Platform)
+            .order_by(Platform.name)
         )
 
         for platform in platform_list:
@@ -54,6 +54,27 @@ class DAL:
             }
 
             return_list.append(platform_obj)
+
+        return return_list
+
+    def get_series(self):
+        return_list = []
+
+        session = self.create_scoped_session()
+
+        series_list = (
+            session
+            .query(Series)
+            .order_by(Series.name)
+        )
+
+        for series in series_list:
+            series_obj = {
+                "name": series.name,
+                "id": series.id
+            }
+
+            return_list.append(series_obj)
 
         return return_list
 
@@ -70,6 +91,7 @@ class DAL:
         game_list = (
             session
             .query(Game)
+            .order_by(Game.name)
         )
 
         for game in game_list.all():
@@ -97,6 +119,7 @@ class DAL:
                 Character,
             )
             .filter(Character.gameId == game_id)
+            .order_by(Character.name)
         )
 
         for character in char_list.all():
@@ -117,6 +140,7 @@ class DAL:
             session
             .query(Move)
             .filter(Move.gameId == game_id)
+            .order_by(Move.name)
         )
 
         for move in move_list:
@@ -179,27 +203,27 @@ class DAL:
             return False
 
     def add_platform(self, platform_name):
-        new_platform = Platform(platform_name)
+        new_platform = Platform(name=platform_name)
         return self.add_object_to_db(new_platform)
 
     def add_series(self, series_name):
-        new_series = Series(series_name)
+        new_series = Series(name=series_name)
         return self.add_object_to_db(new_series)
 
     def add_game(self, game_name, platform_id, series_id):
-        new_game = Game(game_name, platform_id, series_id)
+        new_game = Game(name=game_name, platformId=platform_id, seriesId=series_id)
         return self.add_object_to_db(new_game)
 
     def add_character(self, character_name, game_id):
-        new_character = Character(character_name, game_id)
+        new_character = Character(name=character_name, gameId=game_id)
         return self.add_object_to_db(new_character)
 
     def add_move(self, move_name, input, ex, game_id):
-        new_move = Move(move_name, input, ex, game_id)
+        new_move = Move(name=move_name, input=input, ex=ex, gameId=game_id)
         return self.add_object_to_db(new_move)
 
     def add_character_move_link(self, character_id, move_id):
-        new_link = CharacterMove(character_id, move_id)
+        new_link = CharacterMove(characterId=character_id, moveId=move_id)
         return self.add_object_to_db(new_link)
 
     def delete_platform(self, platform_id):

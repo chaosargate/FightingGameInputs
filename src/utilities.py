@@ -11,6 +11,8 @@ def page_header(title, add_page):
         <script src='/bin/js/react.development.js'></script>
         <script src='/bin/js/react-dom.development.js'></script>
         <script src='/bin/js/babel6.js'></script>
+        <script src='/bin/js/utilities.js'></script>
+        <script src='/bin/js/jquery-3.4.0.min.js'></script>
         <script type="text/babel" src='/bin/js/add_page.js'></script>
         <link rel='stylesheet' href='/bin/css/add_page.css'>
     """
