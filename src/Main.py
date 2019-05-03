@@ -4,15 +4,12 @@ import os
 from DAL import DAL
 from utilities import *
 import json
-import pymysql
-pymysql.install_as_MySQLdb()
 
 
 class Root:
 
     def __init__(self):
         self.dal = DAL("../bin/settings.ini")
-        pass
 
     # Route("/")
     @cherrypy.expose()

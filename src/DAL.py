@@ -24,6 +24,7 @@ class DAL:
             db_str=self.settings.db_str,
             db=self.settings.db
         )
+        print(db_str)
         self.engine = create_engine(
             db_str, echo=False
         )
@@ -93,16 +94,16 @@ class DAL:
         char_list = (
             session
             .query(
-                Gamecharacter,
+                Character,
             )
-            .filter(Gamecharacter.gameId == game_id)
+            .filter(Character.gameId == game_id)
         )
 
         for character in char_list.all():
             char_obj = {
                 "name": character.name,
                 "id": character.id,
-                "game": character.game.name,
+                "game": character.Game.name,
             }
             return_list.append(char_obj)
 
@@ -122,7 +123,7 @@ class DAL:
             moveObj = {
                 "name": move.name,
                 "id": move.id,
-                "game": move.game.name,
+                "game": move.Game.name,
             }
             return_list.append(moveObj)
 
@@ -140,19 +141,19 @@ class DAL:
 
         move_list = (
             session
-            .query(Charactermove)
+            .query(CharacterMove)
             .filter(
-                Charactermove.characterId == char_id
+                CharacterMove.characterId == char_id
             )
         )
         for character_move in move_list.all():
             move_obj = {
-                "name": character_move.move.name,
-                "input": character_move.move.input,
-                "ex": character_move.move.ex,
-                "character_name": character_move.gamecharacter.name,
-                "game_name": character_move.gamecharacter.game.name,
-                "series": character_move.gamecharacter.game.series.name,
+                "name": character_move.Move.name,
+                "input": character_move.Move.input,
+                "ex": character_move.Move.ex,
+                "character_name": character_move.Character.name,
+                "game_name": character_move.Character.Game.name,
+                "series": character_move.Character.Game.Series.name,
                 "id": character_move.id
             }
             return_list.append(move_obj)
@@ -190,7 +191,7 @@ class DAL:
         return self.add_object_to_db(new_game)
 
     def add_character(self, character_name, game_id):
-        new_character = Gamecharacter(character_name, game_id)
+        new_character = Character(character_name, game_id)
         return self.add_object_to_db(new_character)
 
     def add_move(self, move_name, input, ex, game_id):
@@ -198,7 +199,7 @@ class DAL:
         return self.add_object_to_db(new_move)
 
     def add_character_move_link(self, character_id, move_id):
-        new_link = Charactermove(character_id, move_id)
+        new_link = CharacterMove(character_id, move_id)
         return self.add_object_to_db(new_link)
 
     def delete_platform(self, platform_id):

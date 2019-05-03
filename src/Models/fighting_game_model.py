@@ -40,6 +40,8 @@ class Character(Game):
     name = Column(Text, nullable=False)
     gameId = Column(Integer, nullable=False)
 
+    Game = relationship(u'Game')
+
 
 class Move(Base):
     __tablename__ = 'Move'
@@ -54,7 +56,7 @@ class Move(Base):
 
 
 class CharacterMove(Base):
-    __tablename__ = 'characterMoves'
+    __tablename__ = 'CharacterMoves'
 
     id = Column(Integer, primary_key=True)
     characterId = Column(ForeignKey(u'Character.id'), nullable=False)
