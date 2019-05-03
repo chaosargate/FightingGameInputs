@@ -1,6 +1,5 @@
 # coding: utf-8
-from sqlalchemy import Column, ForeignKey, String, text
-from sqlalchemy.dialects.mysql import INTEGER, TINYINT
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, Text
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -9,59 +8,57 @@ metadata = Base.metadata
 
 
 class Platform(Base):
-    __tablename__ = 'platform'
+    __tablename__ = 'Platform'
 
-    id = Column(INTEGER(11), primary_key=True)
-    name = Column(String(150), nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
 
 
 class Series(Base):
-    __tablename__ = 'series'
+    __tablename__ = 'Series'
 
-    id = Column(INTEGER(11), primary_key=True)
-    name = Column(String(45), nullable=False)
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
 
 
 class Game(Base):
-    __tablename__ = 'game'
+    __tablename__ = 'Game'
 
-    id = Column(INTEGER(11), primary_key=True)
-    name = Column(String(150), nullable=False)
-    platformId = Column(ForeignKey(u'platform.id'), index=True)
-    seriesId = Column(ForeignKey(u'series.id'), index=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    platformId = Column(ForeignKey(u'Platform.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False)
+    seriesId = Column(ForeignKey(u'Series.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False)
 
-    platform = relationship(u'Platform')
-    series = relationship(u'Series')
+    Platform = relationship(u'Platform')
+    Series = relationship(u'Series')
 
 
-class Gamecharacter(Base):
-    __tablename__ = 'gamecharacter'
+class Character(Game):
+    __tablename__ = 'Character'
 
-    id = Column(INTEGER(11), primary_key=True)
-    name = Column(String(150), nullable=False)
-    gameId = Column(ForeignKey(u'game.id'), index=True)
-
-    game = relationship(u'Game')
+    id = Column(ForeignKey(u'Game.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), primary_key=True)
+    name = Column(Text, nullable=False)
+    gameId = Column(Integer, nullable=False)
 
 
 class Move(Base):
-    __tablename__ = 'move'
+    __tablename__ = 'Move'
 
-    id = Column(INTEGER(11), primary_key=True)
-    name = Column(String(150), nullable=False)
-    input = Column(String(150), nullable=False)
-    ex = Column(TINYINT(4), nullable=False, server_default=text("'0'"))
-    gameId = Column(ForeignKey(u'game.id'), nullable=False, index=True)
+    id = Column(Integer, primary_key=True)
+    name = Column(Text, nullable=False)
+    input = Column(Text, nullable=False)
+    ex = Column(Boolean, nullable=False)
+    gameId = Column(ForeignKey(u'Game.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False)
 
-    game = relationship(u'Game')
+    Game = relationship(u'Game')
 
 
-class Charactermove(Base):
-    __tablename__ = 'charactermoves'
+class CharacterMove(Base):
+    __tablename__ = 'characterMoves'
 
-    id = Column(INTEGER(11), primary_key=True)
-    characterId = Column(ForeignKey(u'gamecharacter.id'), index=True)
-    moveId = Column(ForeignKey(u'move.id'), index=True)
+    id = Column(Integer, primary_key=True)
+    characterId = Column(ForeignKey(u'Character.id'), nullable=False)
+    moveId = Column(ForeignKey(u'Move.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False)
 
-    gamecharacter = relationship(u'Gamecharacter')
-    move = relationship(u'Move')
+    Character = relationship(u'Character')
+    Move = relationship(u'Move')
