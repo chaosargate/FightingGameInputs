@@ -18,13 +18,10 @@ class CharacterMoveAddForm extends React.Component {
         var dataPromises = [];
         dataPromises.push(makeAjaxGet("/get_game_list", {}));
 
-        if (this.state.selectedGame != null) {
-        }
-
         var thisObj = this;
         Promise.all(dataPromises).then(function(dataArrays) {
             var currState = thisObj.state;
-            currState.games = dataArrays[0];
+            currState.games = dataArrays[0]["data"];
 
             currState.loading = false;
             currState.selectedGame = currState.games[0].id;
@@ -45,8 +42,8 @@ class CharacterMoveAddForm extends React.Component {
 
         var thisObj = this;
         Promise.all(dataPromises).then(function(dataArrays) {
-            var characterList = dataArrays[0];
-            var movelist = dataArrays[1];
+            var characterList = dataArrays[0]["data"];
+            var movelist = dataArrays[1]["data"];
 
             var currState = thisObj.state;
             currState.selectedGame = gameId;

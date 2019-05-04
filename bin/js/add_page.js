@@ -253,11 +253,13 @@ class DataForm extends React.Component {
             <CharacterAddForm submitFn={submitFn} />
         );
     }
+
     renderMoveAddForm(submitFn) {
         return (
             <MoveAddForm submitFn={submitFn} />
         );
     }
+    
     renderCharacterMoveAddForm(submitFn) {
         return (
             <CharacterMoveAddForm submitFn={submitFn} />

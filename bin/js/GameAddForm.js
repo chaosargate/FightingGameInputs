@@ -20,8 +20,8 @@ class GameAddForm extends React.Component {
         var thisObj = this;
         Promise.all(dataPromises).then(function(dataArrays) {
             var currState = thisObj.state;
-            currState.platforms = dataArrays[0];
-            currState.series = dataArrays[1];
+            currState.platforms = dataArrays[0]["data"];
+            currState.series = dataArrays[1]["data"];
             currState.loading = false;
             thisObj.setState(currState);            
         });

@@ -208,10 +208,10 @@ class DAL:
         try:
             session.add(data_obj)
             session.commit()
-            return {"success": True}
+            return True
         except:
             session.rollback()
-            return {"success": False}
+            return False
 
     def add_platform(self, platform_name):
         new_platform = Platform(name=platform_name)

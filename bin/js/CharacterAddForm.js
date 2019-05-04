@@ -19,7 +19,7 @@ class CharacterAddForm extends React.Component {
         var thisObj = this;
         Promise.all(dataPromises).then(function(dataArrays) {
             var currState = thisObj.state;
-            currState.games = dataArrays[0];
+            currState.games = dataArrays[0]["data"];
             currState.loading = false;
             thisObj.setState(currState);        
         });
