@@ -8,7 +8,7 @@ function Dropdown(props) {
     var dataArr = props.data;
 
     return (
-        <select id={props.name}>
+        <select id={props.name} onChange={props.selectFn}>
             {dataArr.map(x => <option id={x.id} key={x.id}>{x.name}</option>)}
         </select>
     )
@@ -82,22 +82,234 @@ class GameAddForm extends React.Component {
     }
 }
 
-function CharacterAddForm(props) {
-    return (
-        <div>This adds characters</div>
-    );
+class CharacterAddForm extends React.Component {
+
+    constructor(props) {
+
+        super(props);
+
+        this.state = {
+            loading: true,
+            games: [],
+            submitFn: props.submitFn,
+        }
+    }
+
+    componentDidMount() {
+        var dataPromises = [];
+        dataPromises.push(makeAjaxGet("/get_game_list", {}));
+
+        var thisObj = this;
+        Promise.all(dataPromises).then(function(dataArrays) {
+            var currState = thisObj.state;
+            currState.games = dataArrays[0];
+            currState.loading = false;
+            thisObj.setState(currState);        
+        });
+    }
+
+    render() {
+        const loading = this.state.loading;
+        var gameSelect = <Dropdown data={this.state.games} name="gameSelect" />;
+        var inputHolder = (
+            <div className="inputHolder">
+                <input id="characterName" placeholder="Character Name"/>
+                {gameSelect}
+                <SubmitButton submitFn={this.state.submitFn} />
+            </div>
+        );
+    
+        return (
+            <div>
+                {loading ? "Loading..." : inputHolder}
+            </div>
+        );
+    }
 }
 
-function MoveAddForm(props) {
+function InputImg(props) {
+    var seriesName = props.seriesName;
+    var button = props.button;
     return (
-        <div>This adds moves</div>
-    );
+        button == "" ?
+        null:
+        <img src={`/bin/buttons/${seriesName}/${button}.png`} height="24px" />
+    )
 }
 
-function CharacterMoveAddForm(props) {
+function MoveInput(props) {
+    var inputArr = props.data.split(",");
+    var seriesSelect = document.getElementById("seriesSelect");
+    var seriesName = props.series;
     return (
-        <div>This links characters and moves</div>
-    );
+        <div className="moveInputHolder">
+            <input id="moveName" name="moveName" placeholder="Move Name" />
+            <div className="exCheckbox">
+                <input name="exCheck" id="exCheck" type="checkbox" />
+                <label htmlFor="exCheck">EX?</label>
+            </div>
+            <input id="moveInput" name="moveInput" value={props.data} onChange={props.updateFn} placeholder="Move Input" />
+            <span className="movePreview">{inputArr.map(x => <InputImg seriesName={seriesName} button={x} key={inputArr.indexOf(x)} />)}</span>
+        </div>
+    )
+}
+
+class MoveAddForm extends React.Component {
+    
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            loading: true,
+            games: [],
+            selectedGame: null,
+            inputStr: "",
+            submitFn: props.submitFn,
+        }
+    }
+
+    updateMove(evt) {
+        var inputStr = evt.target.value;
+        this.state.inputStr = inputStr;
+        this.setState(this.state);
+    }
+
+    updateSelectedGame() {
+        var gameId = getValOfSelect("gameSelect");
+        var selectedGame = this.state.games.find(x => x.id == gameId);
+        this.state.selectedGame = selectedGame;
+        this.setState(this.state);
+    }
+
+    componentDidMount() {
+        var dataPromises = [];
+        dataPromises.push(makeAjaxGet("/get_game_list", {}));
+
+        var thisObj = this;
+        Promise.all(dataPromises).then(function(dataArrays) {
+            var currState = thisObj.state;
+            currState.games = dataArrays[0];
+            currState.selectedGame = currState.games[0];
+            currState.loading = false;
+            thisObj.setState(currState);        
+        });
+    }
+
+    render() {
+        const loading = this.state.loading;
+        var seriesName = (
+            this.state.selectedGame == null ?
+            "":
+            this.state.selectedGame.series
+        );
+
+        var moveInput = <MoveInput data={this.state.inputStr} series={seriesName} updateFn={e => this.updateMove(e)} />
+        var gameSelect = <Dropdown data={this.state.games} name="gameSelect" />;
+
+        var inputHolder = (
+            <div className="inputHolder">
+                {gameSelect}
+                {moveInput}
+                <SubmitButton submitFn={this.state.submitFn} />
+            </div>
+        );
+    
+        return (
+            <div>
+                {loading ? "Loading..." : inputHolder}
+            </div>
+        );
+    }
+
+}
+
+class CharacterMoveAddForm extends React.Component {
+
+    constructor(props) {
+
+        super(props);
+
+        this.state = {
+            loading: true,
+            games: [],
+            characters: [],
+            moves: [],
+            selectedGame: null,
+            submitFn: props.submitFn,
+        }
+    }
+
+    componentDidMount() {
+        var dataPromises = [];
+        dataPromises.push(makeAjaxGet("/get_game_list", {}));
+
+        if (this.state.selectedGame != null) {
+        }
+
+        var thisObj = this;
+        Promise.all(dataPromises).then(function(dataArrays) {
+            var currState = thisObj.state;
+            currState.games = dataArrays[0];
+
+            currState.loading = false;
+            currState.selectedGame = currState.games[0].id;
+            thisObj.setState(currState);
+            thisObj.fetchCharactersAndMoves(currState.selectedGame);
+        });
+    }
+
+    updateSelectedGame(evt) {
+        var gameId = getValOfSelect(evt.target.getAttribute("id"));
+        this.fetchCharactersAndMoves(gameId);
+    }
+
+    fetchCharactersAndMoves(gameId) {
+        var dataPromises = [];
+        dataPromises.push(makeAjaxGet(`/get_characters_from_game?game_id=${gameId}`))
+        dataPromises.push(makeAjaxGet(`/get_movelist_from_game?game_id=${gameId}`))
+
+        var thisObj = this;
+        Promise.all(dataPromises).then(function(dataArrays) {
+            var characterList = dataArrays[0];
+            var movelist = dataArrays[1];
+
+            var currState = thisObj.state;
+            currState.selectedGame = gameId;
+            currState.characters = characterList;
+            currState.moves = movelist;
+            thisObj.setState(currState);
+        })
+    }
+
+    render() {
+        const loading = this.state.loading;
+        var gameSelect = <Dropdown data={this.state.games} name="gameSelect" selectFn={e => this.updateSelectedGame(e)} />;
+        var characterSelect = (
+            this.state.characters.length == 0 ?
+            null :
+            <Dropdown data={this.state.characters} name="characterSelect" />
+        )
+        var moveSelect = (
+            this.state.moves.length == 0 ?
+            null :
+            <Dropdown data={this.state.moves} name="moveSelect" />
+        )
+
+        var inputHolder = (
+            <div className="inputHolder">
+                {gameSelect}
+                {characterSelect}
+                {moveSelect}
+                <SubmitButton submitFn={this.state.submitFn} />
+            </div>
+        );
+    
+        return (
+            <div>
+                {loading ? "Loading..." : inputHolder}
+            </div>
+        );
+    }
 }
 
 function DataTypeRadioButton(props) {
@@ -221,13 +433,8 @@ class DataForm extends React.Component {
 
     submitGame(evt) {
         var gameName = document.getElementById("gameName").value;
-        var platformSelect = document.getElementById("platformSelect");
-        var selectedPlatformIndex = platformSelect.selectedIndex;
-        var platformId = platformSelect[selectedPlatformIndex].id;
-
-        var seriesSelect = document.getElementById("seriesSelect");
-        var selectedSeriesIndex = seriesSelect.selectedIndex;
-        var seriesId = seriesSelect[selectedSeriesIndex].id;
+        var platformId = getValOfSelect("platformSelect");
+        var seriesId = getValOfSelect("seriesSelect");
 
         var inputData = {
             game_name: gameName,
@@ -243,6 +450,64 @@ class DataForm extends React.Component {
             alert(msg);
         });
 
+    }
+
+    submitCharacter(evt) {
+        var characterName = document.getElementById("characterName").value;
+        var gameId = getValOfSelect("gameSelect");
+
+        var inputData = {
+            character_name: characterName,
+            game_id: gameId
+        };
+        
+        var url = "/submit_character";
+
+        makeAjaxPost(url, inputData).then(function(data) {
+            var success = data["success"];
+            var msg = success ? "Character successfully added!" : "Failed to add character!";
+            alert(msg);
+        });
+    }
+
+    submitMove(evt) {
+        var moveName = document.getElementById("moveName").value;
+        var input = document.getElementById("moveInput").value;
+        var ex = document.getElementById("exCheck").value == "on";
+        var gameId = getValOfSelect("gameSelect");
+
+        var inputData = {
+            move_name: moveName,
+            input: input,
+            ex: ex,
+            game_id: gameId,
+        }
+
+        var url="/submit_move";
+
+        makeAjaxPost(url, inputData).then(function(data) {
+            var success = data["success"];
+            var msg = success ? "Move successfully added!" : "Failed to add move!";
+            alert(msg);
+        });
+    }
+
+    submitCharacterMove(evt) {
+        var characterId = getValOfSelect("characterSelect");
+        var moveId = getValOfSelect("moveSelect");
+
+        var inputData = {
+            character_id: characterId,
+            move_id: moveId,
+        }
+
+        var url = "/submit_character_move";
+        
+        makeAjaxPost(url, inputData).then(function(data) {
+            var success = data["success"];
+            var msg = success ? "Move successfully added to character!" : "Failed to add move!";
+            alert(msg);
+        })
     }
 
     renderPlatformAddForm(submitFn) {
@@ -263,19 +528,19 @@ class DataForm extends React.Component {
         );
     }
 
-    renderCharacterAddForm() {
+    renderCharacterAddForm(submitFn) {
         return (
-            <CharacterAddForm />
+            <CharacterAddForm submitFn={submitFn} />
         );
     }
-    renderMoveAddForm() {
+    renderMoveAddForm(submitFn) {
         return (
-            <MoveAddForm />
+            <MoveAddForm submitFn={submitFn} />
         );
     }
-    renderCharacterMoveAddForm() {
+    renderCharacterMoveAddForm(submitFn) {
         return (
-            <CharacterMoveAddForm />
+            <CharacterMoveAddForm submitFn={submitFn} />
         );
     }
 
@@ -289,11 +554,11 @@ class DataForm extends React.Component {
         } else if (this.state.DataType == "Game") {
             entryForm = this.renderGameAddForm(e => this.submitGame(e));
         } else if (this.state.DataType == "Character") {
-            entryForm = this.renderCharacterAddForm();
+            entryForm = this.renderCharacterAddForm(e => this.submitCharacter(e));
         } else if (this.state.DataType == "Move") {
-            entryForm = this.renderMoveAddForm();
+            entryForm = this.renderMoveAddForm(e => this.submitMove(e));
         } else if (this.state.DataType == "Character Move Link") {
-            entryForm = this.renderCharacterMoveAddForm();
+            entryForm = this.renderCharacterMoveAddForm(e => this.submitCharacterMove(e));
         }
 
         return (

@@ -20,3 +20,9 @@ function makeAjaxPost(url, inputData) {
         resolve(makeAjaxCall(url, inputData, "POST"));
     })
 }
+
+function getValOfSelect(selectId) {
+    var select = document.getElementById(selectId);
+    var selectedIndex = select.selectedIndex;
+    return select[selectedIndex].id;
+}

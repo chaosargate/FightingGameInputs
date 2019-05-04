@@ -33,12 +33,12 @@ class Game(Base):
     Series = relationship(u'Series')
 
 
-class Character(Game):
+class Character(Base):
     __tablename__ = 'Character'
 
-    id = Column(ForeignKey(u'Game.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), primary_key=True)
+    id = Column(Integer, primary_key=True)
     name = Column(Text, nullable=False)
-    gameId = Column(Integer, nullable=False)
+    gameId = Column(ForeignKey(u'Game.id', ondelete=u'CASCADE', onupdate=u'CASCADE'), nullable=False)
 
     Game = relationship(u'Game')
 

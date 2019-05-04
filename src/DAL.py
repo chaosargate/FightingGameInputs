@@ -97,11 +97,22 @@ class DAL:
         for game in game_list.all():
             game_obj = {
                 "name": game.name,
-                "id": game.id
+                "id": game.id,
+                "series": game.Series.name
             }
             return_list.append(game_obj)
 
         return return_list
+
+    def get_game(self, game_id):
+        session = self.create_scoped_session()
+        game = (
+            session
+            .query(Game)
+            .filter(Game.id == game_id)
+        )
+
+        return game.one()
 
     def get_characters_from_game(self, game_id):
         """
@@ -197,10 +208,10 @@ class DAL:
         try:
             session.add(data_obj)
             session.commit()
-            return True
+            return {"success": True}
         except:
             session.rollback()
-            return False
+            return {"success": False}
 
     def add_platform(self, platform_name):
         new_platform = Platform(name=platform_name)

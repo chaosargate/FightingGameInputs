@@ -16,7 +16,8 @@
 }
 
 .inputHolder > input,
-.inputHolder > select {
+.inputHolder > select,
+.inputHolder > div > input {
     padding: 5px;
     width: 50%;
     margin: 5px;
@@ -26,4 +27,20 @@
     margin: 5px;
     width: 10%;
     padding: 2px;
+}
+
+.moveInputHolder {
+    display: inline-grid;
+}
+
+.movePreview {
+    height: 24px;
+}
+
+.movePreview > img {
+    padding: 3px;
+}
+
+.exCheckbox {
+    
 }

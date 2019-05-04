@@ -112,20 +112,48 @@ class Root:
         return json.dumps(move_list)
 
     @cherrypy.expose()
+    def get_characters_from_game(self, game_id):
+        character_list = self.dal.get_characters_from_game(game_id)
+        return json.dumps(character_list)
+
+    @cherrypy.expose()
     def submit_platform(self, platform_name):
-        return json.dumps({"success": self.dal.add_platform(platform_name)})
+        return json.dumps(self.dal.add_platform(platform_name))
 
     @cherrypy.expose()
     def submit_series(self, series_name):
-        return json.dumps({"success": self.dal.add_series(series_name)})
+        return json.dumps(self.dal.add_series(series_name))
 
     @cherrypy.expose()
     def submit_game(self, platform_id, series_id, game_name):
-        return json.dumps({"success": self.dal.add_game(
+        return json.dumps(self.dal.add_game(
             game_name=game_name,
             platform_id=platform_id,
             series_id=series_id
-        )})
+        ))
+
+    @cherrypy.expose()
+    def submit_character(self, character_name, game_id):
+        return json.dumps(self.dal.add_character(
+            character_name=character_name,
+            game_id=game_id
+        ))
+
+    @cherrypy.expose()
+    def submit_move(self, move_name, input, ex, game_id):
+        return json.dumps(self.dal.add_move(
+            move_name=move_name,
+            input=input,
+            ex=ex == "true",
+            game_id=game_id
+        ))
+
+    @cherrypy.expose()
+    def submit_character_move(self, character_id, move_id):
+        return json.dumps(self.dal.add_character_move_link(
+            character_id=character_id,
+            move_id=move_id
+        ))
 
     
 if __name__ == "__main__":
