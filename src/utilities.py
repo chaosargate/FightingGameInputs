@@ -14,6 +14,10 @@ def page_header(title, add_page):
         <script src='/bin/js/utilities.js'></script>
         <script src='/bin/js/jquery-3.4.0.min.js'></script>
         <script type="text/babel" src='/bin/js/add_page.js'></script>
+        <script type="text/babel" src='/bin/js/CharacterAddForm.js'></script>
+        <script type="text/babel" src='/bin/js/CharacterMoveAddForm.js'></script>
+        <script type="text/babel" src='/bin/js/GameAddForm.js'></script>
+        <script type="text/babel" src='/bin/js/MoveAddForm.js'></script>
         <link rel='stylesheet' href='/bin/css/add_page.css'>
     """
     return """
