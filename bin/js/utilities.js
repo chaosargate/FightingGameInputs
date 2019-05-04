@@ -9,7 +9,7 @@ function makeAjaxCall(url, inputData, verb) {
     })
 }
 
-function makeAjaxGet(url, inputData) {
+function makeAjaxGet(url, inputData={}) {
     return new Promise(function(resolve, reject) {
         resolve(makeAjaxCall(url, inputData, "GET"));
     })
@@ -25,4 +25,10 @@ function getValOfSelect(selectId) {
     var select = document.getElementById(selectId);
     var selectedIndex = select.selectedIndex;
     return select[selectedIndex].id;
+}
+
+function postHandler(response, successMsg, failureMsg) {    
+    var success = response["status"];
+    var msg = success ? successMsg : failureMsg;
+    alert(msg);
 }

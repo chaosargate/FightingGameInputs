@@ -122,12 +122,8 @@ class DataForm extends React.Component {
             platform_name: platformName
         };
 
-        var url = "/submit_platform";
-
-        makeAjaxPost(url, inputData).then(function(data) {
-            var success = data["success"];
-            var msg = success ? "Platform successfully added!" : "Failed to add platform!";
-            alert(msg);
+        postPlatform(inputData).then(function(data) {
+            postHandler(data, "Platform successfully added!", "Failed to add platform!");
         });
     }
 
@@ -142,12 +138,8 @@ class DataForm extends React.Component {
             series_name: seriesName
         };
 
-        var url = "/submit_series";
-
-        makeAjaxPost(url, inputData).then(function(data) {
-            var success = data["success"];
-            var msg = success ? "Series successfully added!" : "Failed to add series!";
-            alert(msg);
+        postSeries(inputData).then(function(data) {
+            postHandler(data, "Series successfully added!", "Failed to add series!");
         });
     }
 
@@ -161,15 +153,10 @@ class DataForm extends React.Component {
             platform_id: platformId,
             series_id: seriesId
         };
-        
-        var url = "/submit_game";
 
-        makeAjaxPost(url, inputData).then(function(data) {
-            var success = data["success"];
-            var msg = success ? "Game successfully added!" : "Failed to add game!";
-            alert(msg);
+        postGame(inputData).then(function(data) {
+            postHandler(data, "Game successfully added!", "Failed to add game!");
         });
-
     }
 
     submitCharacter(evt) {
@@ -180,13 +167,9 @@ class DataForm extends React.Component {
             character_name: characterName,
             game_id: gameId
         };
-        
-        var url = "/submit_character";
 
-        makeAjaxPost(url, inputData).then(function(data) {
-            var success = data["success"];
-            var msg = success ? "Character successfully added!" : "Failed to add character!";
-            alert(msg);
+        postCharacter(inputData).then(function(data) {
+            postHandler(data, "Character successfully added!", "Failed to add character!");
         });
     }
 
@@ -203,12 +186,8 @@ class DataForm extends React.Component {
             game_id: gameId,
         }
 
-        var url="/submit_move";
-
-        makeAjaxPost(url, inputData).then(function(data) {
-            var success = data["success"];
-            var msg = success ? "Move successfully added!" : "Failed to add move!";
-            alert(msg);
+        postMove(inputData).then(function(data) {
+            postHandler(data, "Move successfully added!", "Failed to add move!");
         });
     }
 
@@ -221,13 +200,9 @@ class DataForm extends React.Component {
             move_id: moveId,
         }
 
-        var url = "/submit_character_move";
-        
-        makeAjaxPost(url, inputData).then(function(data) {
-            var success = data["success"];
-            var msg = success ? "Move successfully added to character!" : "Failed to add move!";
-            alert(msg);
-        })
+        postCharacterMove(inputData).then(function(data) {
+            postHandler(data, "Move successfully added to character!", "Failed to add move to character!");
+        });
     }
 
     renderPlatformAddForm(submitFn) {
@@ -259,7 +234,7 @@ class DataForm extends React.Component {
             <MoveAddForm submitFn={submitFn} />
         );
     }
-    
+
     renderCharacterMoveAddForm(submitFn) {
         return (
             <CharacterMoveAddForm submitFn={submitFn} />

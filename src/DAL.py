@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from Models.fighting_game_model import *
+from Models.users_model import *
 from SettingsIni import SettingsIni
+from utilities import make_session_id
+import datetime
 
 
 class DAL:
@@ -126,9 +129,7 @@ class DAL:
 
         char_list = (
             session
-            .query(
-                Character,
-            )
+            .query(Character)
             .filter(Character.gameId == game_id)
             .order_by(Character.name)
         )
@@ -177,9 +178,7 @@ class DAL:
         move_list = (
             session
             .query(CharacterMove)
-            .filter(
-                CharacterMove.characterId == char_id
-            )
+            .filter(CharacterMove.characterId == char_id)
         )
         for character_move in move_list.all():
             move_obj = {
@@ -239,3 +238,50 @@ class DAL:
 
     def delete_platform(self, platform_id):
         pass
+
+    def get_signing_key(self):
+        session = self.create_scoped_session()
+        key = (
+            session
+            .query(SigningKey)
+        ).one()
+        return key.key
+
+    def register_user(self, username, password):
+        new_user = User(username=username, password=password)
+        return self.add_object_to_db(new_user)
+
+    def login_user(self, username, password):
+        user = {}
+        session = self.create_scoped_session()
+        user_query = (
+            session
+            .query(User)
+            .filter(User.username == username)
+            .filter(User.password == password)
+        ).one()
+
+        if user_query:
+            session_id = make_session_id()
+            user_query.sessionId = session_id
+            user_query.sessionValidFrom = datetime.datetime.utcnow()
+
+            session.commit()
+
+            user["id"] = user_query.id
+            user["session_id"] = user_query.sessionId
+
+        return user
+
+    def check_if_session_is_valid(self, user_id, session_id):
+        session = self.create_scoped_session()
+        session_exp_time = datetime.timedelta(hours=1)
+        user = (
+            session
+            .query(User)
+            .filter(User.id == user_id)
+            .filter(User.sessionId == session_id)
+            .filter(User.sessionValidFrom + session_exp_time < datetime.datetime.utcnow())
+        ).all()
+
+        return len(user)

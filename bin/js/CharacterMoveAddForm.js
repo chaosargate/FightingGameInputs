@@ -16,7 +16,7 @@ class CharacterMoveAddForm extends React.Component {
 
     componentDidMount() {
         var dataPromises = [];
-        dataPromises.push(makeAjaxGet("/get_game_list", {}));
+        dataPromises.push(getGamesList());
 
         var thisObj = this;
         Promise.all(dataPromises).then(function(dataArrays) {
@@ -37,8 +37,8 @@ class CharacterMoveAddForm extends React.Component {
 
     fetchCharactersAndMoves(gameId) {
         var dataPromises = [];
-        dataPromises.push(makeAjaxGet(`/get_characters_from_game?game_id=${gameId}`))
-        dataPromises.push(makeAjaxGet(`/get_movelist_from_game?game_id=${gameId}`))
+        dataPromises.push(getCharactersFromGame(gameId));
+        dataPromises.push(getMovesFromGame(gameId));
 
         var thisObj = this;
         Promise.all(dataPromises).then(function(dataArrays) {

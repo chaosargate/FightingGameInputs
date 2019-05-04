@@ -54,7 +54,7 @@ class MoveAddForm extends React.Component {
 
     componentDidMount() {
         var dataPromises = [];
-        dataPromises.push(makeAjaxGet("/get_game_list", {}));
+        dataPromises.push(getGamesList());
 
         var thisObj = this;
         Promise.all(dataPromises).then(function(dataArrays) {

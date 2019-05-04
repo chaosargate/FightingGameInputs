@@ -14,8 +14,8 @@ class GameAddForm extends React.Component {
 
     componentDidMount() {
         var dataPromises = [];
-        dataPromises.push(makeAjaxGet("/get_platform_list", {}));
-        dataPromises.push(makeAjaxGet("/get_series_list", {}));
+        dataPromises.push(getPlatformList());
+        dataPromises.push(getSeriesList());
 
         var thisObj = this;
         Promise.all(dataPromises).then(function(dataArrays) {
