@@ -75,7 +75,7 @@ class MoveAddForm extends React.Component {
         );
 
         var moveInput = <MoveInput data={this.state.inputStr} series={seriesName} updateFn={e => this.updateMove(e)} />
-        var gameSelect = <Dropdown data={this.state.games} name="gameSelect" />;
+        var gameSelect = <Dropdown data={this.state.games} name="gameSelect" selectFn={e => this.updateSelectedGame(e)} />;
 
         var inputHolder = (
             <div className="inputHolder">

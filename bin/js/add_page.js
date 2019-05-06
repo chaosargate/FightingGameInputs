@@ -1,3 +1,8 @@
+/**
+ * The submit button.
+ * @param {*} props The submit button's properties.
+ * submitFn - The function to call when submitting the form.
+ */
 function SubmitButton(props) {
     return (
         <button onClick={props.submitFn}>Submit</button>

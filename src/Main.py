@@ -29,64 +29,32 @@ class Root:
 
         return make_page("Select a game!", game_list_links)
 
+    # Route("/gamecharacters/{game_id}
     @cherrypy.expose()
     def gamecharacters(self, game_id):
-        return_str = ""
-        page_title = ""
-        char_list = self.dal.get_characters_from_game(game_id)
+        game = self.dal.get_game(game_id)
+        page_title = game.name
 
-        for character in char_list:
-            char_link = "<a href='/character/{id}'>{name}</a></br>".format(
-                id=character["id"],
-                name=character["name"]
-            )
-            return_str += char_link
+        return_str = """
+        <body class='{game_class}'>
+            <div id='root' class='root'></div>
+            <script>
+                var gameId = {game_id}
+            </script>
+        </body>
+        """.format(
+            game_class=game.name.replace(" ", ""),
+            game_id=game_id
+        )
 
-            if page_title == "":
-                page_title = character["game"]
+        return make_page(page_title, return_str, react_page=True)
 
-        return make_page(page_title, return_str)
-
-    @cherrypy.expose()
-    def character(self, character_id):
-        page_title = ""
-        out_table = """
-        <table>
-            <thead>
-                <td>Name</td>
-                <td>Input</td>
-                <td>EX</td>
-            </thead>
-        """
-        move_list = self.dal.get_moves_for_character(character_id)
-
-        for move in move_list:
-            row = """
-            <tr class='moveRow'>
-                <td>{name}</td>
-                <td>{input}</td>
-                <td>{ex}</td>
-            </tr>""".format(
-                name=move["name"],
-                input=make_input_td(move["series"], move["input"]),
-                ex="Yes" if move["ex"] else "No"
-            )
-            out_table += row
-
-            if page_title == "":
-                page_title = "{name} - {game}".format(
-                    name=move["character_name"],
-                    game=move["game_name"]
-                )
-
-        out_table += "</table><br /><small>*All moves assume player is on left side</small>"
-        return make_page(page_title, out_table)
-
+    # Route("/add_page/")
     @cherrypy.expose()
     def add_page(self):
         page_title = "Add Data"
         body = """<div id="reactForm" />"""
-        return make_page(page_title, body, add_page=True)
+        return make_page(page_title, body, react_page=True)
 
 
 if __name__ == "__main__":

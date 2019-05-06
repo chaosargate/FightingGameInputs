@@ -2,15 +2,16 @@ import hashlib
 import uuid
 import jwt
 
-def make_page(title, body, add_page=False):
+
+def make_page(title, body, react_page=False):
     return "{header}<h1>{title}</h1><br/>{table}".format(
-        header=page_header(title, add_page),
+        header=page_header(title, react_page),
         title=title,
         table=body
     )
 
 
-def page_header(title, add_page):
+def page_header(title, react_page):
     react_imports = """
         <script src='/bin/js/react.development.js'></script>
         <script src='/bin/js/react-dom.development.js'></script>
@@ -23,7 +24,9 @@ def page_header(title, add_page):
         <script type="text/babel" src='/bin/js/CharacterMoveAddForm.js'></script>
         <script type="text/babel" src='/bin/js/GameAddForm.js'></script>
         <script type="text/babel" src='/bin/js/MoveAddForm.js'></script>
+        <script type="text/babel" src='/bin/js/characterViewer.js'></script>
         <link rel='stylesheet' href='/bin/css/add_page.css'>
+        <link rel='stylesheet' href='/bin/css/characterViewer.css'>
     """
     return """
     <head>
@@ -32,7 +35,7 @@ def page_header(title, add_page):
         <title>{title}</title>
     </head>
     """.format(
-           react_imports=react_imports if add_page else "",
+           react_imports=react_imports if react_page else "",
            title=title
     )
 

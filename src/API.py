@@ -7,20 +7,31 @@ class API:
 
     def __init__(self, dal):
         self.dal = dal
-        pass
 
     @cherrypy.expose()
     def get_platform_list(self):
+        """
+        Returns a list of platforms.
+        :return: A list of platforms.
+        """
         platform_list = self.dal.get_platforms()
         return make_response(True, platform_list)
 
     @cherrypy.expose()
     def get_series_list(self):
+        """
+        Returns a list of series.
+        :return: A list of series.
+        """
         series_list = self.dal.get_series()
         return make_response(True, series_list)
 
     @cherrypy.expose()
     def get_game_list(self):
+        """
+        Returns a list of games.
+        :return: A list of games.
+        """
         game_list = self.dal.get_games()
         return make_response(True, data=game_list)
 

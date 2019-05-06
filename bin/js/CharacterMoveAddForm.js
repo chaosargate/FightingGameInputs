@@ -47,8 +47,8 @@ class CharacterMoveAddForm extends React.Component {
 
             var currState = thisObj.state;
             currState.selectedGame = gameId;
-            currState.characters = characterList;
-            currState.moves = movelist;
+            currState.characters = characterList ? characterList : [];
+            currState.moves = movelist ? movelist : [];
             thisObj.setState(currState);
         })
     }

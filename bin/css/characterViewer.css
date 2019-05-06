@@ -1,0 +1,47 @@
+.StreetFighter2 {
+    background-color: #10106d;
+    color: orange;
+}
+
+.SuperStreetFighter2 {
+    background-color: #10106d;
+    color: orange;
+}
+
+.CharacterViewer {
+    display: -webkit-box;
+}
+
+.CharacterInfo {
+    width: 50%;
+    background: rgb(128, 128, 128, 0.6);
+    border-radius: 7px;
+    padding: 5px;
+}
+
+.CharacterSelect {
+    display: grid;
+    width: 10%;
+}
+
+.characterName {
+    margin-top: 0px;
+}
+
+.moveTable {
+    width: 100%
+}
+
+.moveRow {
+    display: grid;
+    margin-top: 10px;
+}
+
+.moveName {
+    background-color: rgba(195, 0, 0, 1);
+    color: white;
+}
+
+.moveInput {
+
+}

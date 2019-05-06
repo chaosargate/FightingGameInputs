@@ -38,6 +38,14 @@ function getMovesFromGame(gameId) {
     })
 }
 
+function getMovesForChar(charId) {
+    return new Promise(function(resolve, reject) {
+        resolve(
+            makeAjaxGet(`/api/get_movelist_for_char`, {char_id: charId})
+        );
+    })
+}
+
 function postPlatform(payload) {
     return new Promise(function(resolve, reject) {
         var url = "/api/submit_platform";
